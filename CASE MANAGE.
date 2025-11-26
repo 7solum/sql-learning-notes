@@ -1,0 +1,63 @@
+/* ===========================
+   SQL CASE Statement Cheat Sheet
+   =========================== */
+
+/* 1. Categorizing Age
+   WHY: Use CASE to classify or label data based on conditions.
+   EXAMPLE USE: Creating age groups for reports or dashboards. */
+SELECT 
+    FirstName, 
+    LastName, 
+    Age,
+    CASE
+        WHEN Age = 38 THEN 'Stanley'        -- Specific value check
+        WHEN Age > 30 THEN 'OLD'           -- Greater than condition
+        ELSE 'baby'                        -- Default category
+    END AS AgeCategory
+FROM dbo.EmployeeDemographics
+WHERE Age IS NOT NULL
+ORDER BY Age;
+
+/* 2. Conditional Salary Raises by JobTitle
+   WHY: Perform calculations conditionally depending on another column.
+   EXAMPLE USE: Give different percentage raises by role automatically. */
+SELECT 
+    FirstName, 
+    LastName, 
+    Salary,
+    CASE
+        WHEN JobTitle = 'Salesman' THEN Salary + (Salary * 0.10)      -- 10% raise
+        WHEN JobTitle = 'Accountant' THEN Salary + (Salary * 0.05)    -- 5% raise
+        WHEN JobTitle = 'HR' THEN Salary + (Salary * 0.0000001)       -- Minimal raise
+        ELSE Salary + (Salary * 0.03)                                 -- Default 3% raise
+    END AS SalaryAfterRaise
+FROM dbo.EmployeeDemographics
+JOIN dbo.EmployeeSalary
+    ON EmployeeDemographics.EmployeeID = EmployeeSalary.EmployeeID;
+
+/* 3. Nested CASE Example
+   WHY: Handle multi-level logic where a single CASE is not enough.
+   EXAMPLE USE: Give extra bonus to low-salary salespeople, others standard raise. */
+SELECT 
+    FirstName,
+    LastName,
+    Salary,
+    CASE
+        WHEN JobTitle = 'Salesman' THEN 
+            CASE 
+                WHEN Salary < 50000 THEN Salary + (Salary * 0.15)  -- Extra boost
+                ELSE Salary + (Salary * 0.10)
+            END
+        WHEN JobTitle = 'Accountant' THEN Salary + (Salary * 0.05)
+        ELSE Salary + (Salary * 0.03)
+    END AS AdjustedSalary
+FROM dbo.EmployeeDemographics
+JOIN dbo.EmployeeSalary
+    ON EmployeeDemographics.EmployeeID = EmployeeSalary.EmployeeID;
+
+/* 4. CASE in Aggregate Functions
+   WHY: Summarize data conditionally within groups.
+   EXAMPLE USE: Calculate total salaries per department by job type. */
+SELECT 
+    Department,
+    SUM(CASE WHEN J
