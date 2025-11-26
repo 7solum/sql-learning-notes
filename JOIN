@@ -1,0 +1,58 @@
+/* ===========================
+   SQL JOIN Cheat Sheet
+   =========================== */
+
+/* 1. LEFT JOIN - All customers with their orders (NULL if no order) */
+SELECT
+    c.id,
+    c.first_name,
+    o.order_id,
+    o.sales
+FROM dbo.customers AS c
+LEFT JOIN orders AS o
+ON c.id = o.customer_id;
+
+/* 2. FULL JOIN - All customers and all orders, even if no match */
+SELECT
+    c.id,
+    c.first_name,
+    o.order_id,
+    o.sales
+FROM dbo.customers AS c
+FULL JOIN orders AS o
+ON c.id = o.customer_id;
+
+/* 3. LEFT ANTI JOIN - Customers without orders */
+SELECT *
+FROM customers AS c
+LEFT JOIN orders AS o
+ON c.id = o.customer_id
+WHERE o.customer_id IS NULL;
+
+/* 4. RIGHT ANTI JOIN - Orders without matching customers */
+SELECT *
+FROM customers AS c
+RIGHT JOIN orders AS o
+ON c.id = o.customer_id
+WHERE c.id IS NULL;
+
+/* 5. FULL ANTI JOIN - Customers without orders and orders without customers */
+SELECT *
+FROM orders AS o
+FULL JOIN customers AS c
+ON o.customer_id = c.id
+WHERE c.id IS NULL
+   OR o.customer_id IS NULL;
+
+/* 6. Customers who HAVE placed orders only (without INNER JOIN) */
+SELECT *
+FROM customers AS c
+LEFT JOIN orders AS o
+ON c.id = o.customer_id
+WHERE o.customer_id IS NOT NULL;
+
+/* 7. CROSS JOIN - All possible combinations of customers and orders */
+SELECT *
+FROM customers
+CROSS JOIN orders;
+  
